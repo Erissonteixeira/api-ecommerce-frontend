@@ -1,8 +1,13 @@
+import Header from "./components/Header";
+
 function App() {
   return (
-    <div>
-      <h1>Front-end E-commerce</h1>
-    </div>
+    <>
+      <Header />
+      <div className="container">
+        <h1>Front-end E-commerce</h1>
+      </div>
+    </>
   );
 }
 

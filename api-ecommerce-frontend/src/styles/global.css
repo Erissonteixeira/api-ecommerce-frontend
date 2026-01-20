@@ -1,16 +1,10 @@
-* {
-  box-sizing: border-box;
+.app-header {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e6e8ee;
 }
 
-body {
+.app-title {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f6f7f9;
-  color: #222;
-}
-
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 16px;
+  padding: 14px 0;
+  font-size: 18px;
 }
