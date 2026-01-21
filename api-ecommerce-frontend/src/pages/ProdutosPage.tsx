@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { listarProdutos } from "../services/produtosService";
 import type { Produto } from "../types/produto";
 
@@ -12,7 +13,7 @@ function ProdutosPage() {
       try {
         const data = await listarProdutos();
         setProdutos(data);
-      } catch (e) {
+      } catch {
         setErro("Não foi possível carregar os produtos.");
       } finally {
         setCarregando(false);
@@ -50,7 +51,9 @@ function ProdutosPage() {
         <ul>
           {produtos.map((p) => (
             <li key={p.id}>
-              {p.nome} — R$ {p.preco}
+              <Link to={`/produtos/${p.id}`}>
+                {p.nome} — R$ {p.preco}
+              </Link>
             </li>
           ))}
         </ul>
