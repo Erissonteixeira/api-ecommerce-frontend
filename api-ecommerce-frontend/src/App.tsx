@@ -1,12 +1,11 @@
 import Header from "./components/Header";
+import ProdutosPage from "./pages/ProdutosPage";
 
 function App() {
   return (
     <>
       <Header />
-      <div className="container">
-        <h1>Front-end E-commerce</h1>
-      </div>
+      <ProdutosPage />
     </>
   );
 }
