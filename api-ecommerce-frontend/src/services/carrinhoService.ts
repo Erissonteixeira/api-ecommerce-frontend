@@ -104,3 +104,7 @@ export async function removerItemDoCarrinho(
 
   return buscarCarrinho(carrinhoId);
 }
+
+export function limparCarrinhoLocal() {
+  localStorage.removeItem("carrinhoId");
+}
