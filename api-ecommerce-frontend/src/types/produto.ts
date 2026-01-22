@@ -6,3 +6,5 @@ export interface Produto {
   criadoEm: string;
   atualizadoEm: string | null;
 }
+
+export type ProdutoResumo = Pick<Produto, "id" | "nome" | "preco">;

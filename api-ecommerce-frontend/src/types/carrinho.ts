@@ -1,7 +1,7 @@
-import type { Produto } from "./produto";
+import type { ProdutoResumo } from "./produto";
 
 export interface ItemCarrinho {
-  produto: Produto;
+  produto: ProdutoResumo;
   quantidade: number;
 }
 
