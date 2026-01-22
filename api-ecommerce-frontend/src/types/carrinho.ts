@@ -10,3 +10,9 @@ export interface Carrinho {
   itens: ItemCarrinho[];
   total: number;
 }
+export interface AdicionarItemRequest {
+  produtoId: number;
+  nomeProduto: string;
+  preco: number;
+  quantidade: number;
+}

@@ -1,6 +1,6 @@
 import { request } from "./api";
-import type { Carrinho } from "../types/carrinho";
-import type { Produto } from "../types/produto";
+import type { Carrinho, AdicionarItemRequest } from "../types/carrinho";
+import type { ProdutoResumo } from "../types/produto";
 
 const CARRINHO_ID_KEY = "carrinhoId";
 
@@ -20,20 +20,19 @@ type CarrinhoApi = {
   total: number;
 };
 
-function mapItemApiParaProduto(item: ItemCarrinhoApi): Produto {
+function mapItemApiParaProdutoResumo(item: ItemCarrinhoApi): ProdutoResumo {
   return {
     id: item.produtoId,
     nome: item.nomeProduto,
     preco: item.precoUnitario,
-    ativo: true,
-  } as Produto;
+  };
 }
 
 function mapCarrinhoApiParaCarrinho(apiModel: CarrinhoApi): Carrinho {
   return {
     id: apiModel.id,
     itens: apiModel.itens.map((item) => ({
-      produto: mapItemApiParaProduto(item),
+      produto: mapItemApiParaProdutoResumo(item),
       quantidade: item.quantidade,
     })),
     total: apiModel.total,
@@ -59,13 +58,9 @@ function limparCarrinhoId() {
 }
 
 export async function criarCarrinho(): Promise<Carrinho> {
-  const data = await request<CarrinhoApi>("/carrinhos", {
-    method: "POST",
-  });
-
+  const data = await request<CarrinhoApi>("/carrinhos", { method: "POST" });
   const carrinho = mapCarrinhoApiParaCarrinho(data);
   salvarCarrinhoId(carrinho.id);
-
   return carrinho;
 }
 
@@ -77,9 +72,7 @@ export async function buscarCarrinho(id: number): Promise<Carrinho> {
 export async function obterOuCriarCarrinho(): Promise<Carrinho> {
   const id = getCarrinhoIdSalvo();
 
-  if (!id) {
-    return criarCarrinho();
-  }
+  if (!id) return criarCarrinho();
 
   try {
     return await buscarCarrinho(id);
@@ -87,4 +80,27 @@ export async function obterOuCriarCarrinho(): Promise<Carrinho> {
     limparCarrinhoId();
     return criarCarrinho();
   }
+}
+
+export async function adicionarItemAoCarrinho(
+  carrinhoId: number,
+  payload: AdicionarItemRequest
+): Promise<Carrinho> {
+  const data = await request<CarrinhoApi>(`/carrinhos/${carrinhoId}/itens`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return mapCarrinhoApiParaCarrinho(data);
+}
+
+export async function removerItemDoCarrinho(
+  carrinhoId: number,
+  produtoId: number
+): Promise<Carrinho> {
+  await request<void>(`/carrinhos/${carrinhoId}/itens/${produtoId}`, {
+    method: "DELETE",
+  });
+
+  return buscarCarrinho(carrinhoId);
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { buscarProdutoPorId } from "../services/produtosService";
+import { obterOuCriarCarrinho, adicionarItemAoCarrinho } from "../services/carrinhoService";
 import type { Produto } from "../types/produto";
 
 function ProdutoDetalhePage() {
@@ -8,6 +9,7 @@ function ProdutoDetalhePage() {
   const [produto, setProduto] = useState<Produto | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [adicionando, setAdicionando] = useState(false);
 
   useEffect(() => {
     async function carregar() {
@@ -33,6 +35,28 @@ function ProdutoDetalhePage() {
 
     carregar();
   }, [id]);
+
+  async function handleAdicionarAoCarrinho() {
+    if (!produto) return;
+
+    try {
+      setAdicionando(true);
+      const carrinho = await obterOuCriarCarrinho();
+
+      await adicionarItemAoCarrinho(carrinho.id, {
+        produtoId: produto.id,
+        nomeProduto: produto.nome,
+        preco: produto.preco,
+        quantidade: 1,
+      });
+
+      alert("Produto adicionado ao carrinho");
+    } catch {
+      alert("Erro ao adicionar produto ao carrinho");
+    } finally {
+      setAdicionando(false);
+    }
+  }
 
   if (carregando) {
     return (
@@ -71,33 +95,13 @@ function ProdutoDetalhePage() {
     <div className="container">
       <h1>Detalhe do Produto</h1>
 
-      <p>
-        <strong>ID:</strong> {produto.id}
-      </p>
-      <p>
-        <strong>Nome:</strong> {produto.nome}
-      </p>
-      <p>
-        <strong>Preço:</strong> R$ {produto.preco}
-      </p>
+      <p><strong>ID:</strong> {produto.id}</p>
+      <p><strong>Nome:</strong> {produto.nome}</p>
+      <p><strong>Preço:</strong> R$ {produto.preco}</p>
 
-      {"ativo" in produto && (
-        <p>
-          <strong>Ativo:</strong> {produto.ativo ? "Sim" : "Não"}
-        </p>
-      )}
-
-      {"criadoEm" in produto && (
-        <p>
-          <strong>Criado em:</strong> {produto.criadoEm}
-        </p>
-      )}
-
-      {"atualizadoEm" in produto && (
-        <p>
-          <strong>Atualizado em:</strong> {produto.atualizadoEm ?? "-"}
-        </p>
-      )}
+      <button onClick={handleAdicionarAoCarrinho} disabled={adicionando}>
+        {adicionando ? "Adicionando..." : "Adicionar ao Carrinho"}
+      </button>
 
       <p>
         <Link to="/produtos">← Voltar para Produtos</Link>
