@@ -10,6 +10,7 @@ function ProdutoDetalhePage() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [adicionando, setAdicionando] = useState(false);
+  const [quantidade, setQuantidade] = useState<number>(1);
 
   useEffect(() => {
     async function carregar() {
@@ -39,6 +40,12 @@ function ProdutoDetalhePage() {
   async function handleAdicionarAoCarrinho() {
     if (!produto) return;
 
+    const qtd = Number(quantidade);
+    if (!Number.isFinite(qtd) || qtd < 1) {
+      alert("Quantidade inválida");
+      return;
+    }
+
     try {
       setAdicionando(true);
       const carrinho = await obterOuCriarCarrinho();
@@ -47,7 +54,7 @@ function ProdutoDetalhePage() {
         produtoId: produto.id,
         nomeProduto: produto.nome,
         preco: produto.preco,
-        quantidade: 1,
+        quantidade: qtd,
       });
 
       alert("Produto adicionado ao carrinho");
@@ -56,6 +63,14 @@ function ProdutoDetalhePage() {
     } finally {
       setAdicionando(false);
     }
+  }
+
+  function diminuirQuantidade() {
+    setQuantidade((q) => Math.max(1, q - 1));
+  }
+
+  function aumentarQuantidade() {
+    setQuantidade((q) => q + 1);
   }
 
   if (carregando) {
@@ -98,6 +113,25 @@ function ProdutoDetalhePage() {
       <p><strong>ID:</strong> {produto.id}</p>
       <p><strong>Nome:</strong> {produto.nome}</p>
       <p><strong>Preço:</strong> R$ {produto.preco}</p>
+
+      <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "12px 0" }}>
+        <button type="button" onClick={diminuirQuantidade} disabled={adicionando}>
+          -
+        </button>
+
+        <input
+          type="number"
+          min={1}
+          value={quantidade}
+          onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value)))}
+          disabled={adicionando}
+          style={{ width: 70, textAlign: "center" }}
+        />
+
+        <button type="button" onClick={aumentarQuantidade} disabled={adicionando}>
+          +
+        </button>
+      </div>
 
       <button onClick={handleAdicionarAoCarrinho} disabled={adicionando}>
         {adicionando ? "Adicionando..." : "Adicionar ao Carrinho"}
