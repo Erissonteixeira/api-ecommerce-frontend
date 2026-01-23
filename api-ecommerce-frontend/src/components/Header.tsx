@@ -1,25 +1,36 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import styles from "./Header.module.css";
 
 function Header() {
   return (
-    <header className="app-header">
-      <div className="container app-header-content">
-        <h2 className="app-title">
-          <Link to="/" className="app-brand">
-            Meu E-commerce
-          </Link>
-        </h2>
+    <header className={styles.header}>
+      <div className={styles.inner}>
+        <div className={styles.brand}>
+          <div className={styles.logo} />
+          <span>Meu E-commerce</span>
+        </div>
 
-        <nav className="app-nav">
-          <Link to="/produtos" className="app-nav-link">
+        <nav className={styles.nav}>
+          <NavLink
+            to="/produtos"
+            className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
+          >
             Produtos
-          </Link>
-          <Link to="/carrinho" className="app-nav-link">
+          </NavLink>
+
+          <NavLink
+            to="/carrinho"
+            className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
+          >
             Carrinho
-          </Link>
-          <Link to="/checkout" className="app-nav-link">
+          </NavLink>
+
+          <NavLink
+            to="/checkout"
+            className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
+          >
             Checkout
-          </Link>
+          </NavLink>
         </nav>
       </div>
     </header>
