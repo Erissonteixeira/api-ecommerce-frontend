@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { buscarProdutoPorId } from "../services/produtosService";
 import { obterOuCriarCarrinho, adicionarItemAoCarrinho } from "../services/carrinhoService";
 import type { Produto } from "../types/produto";
+import styles from "./ProdutoDetalhePage.module.css";
 
 function ProdutoDetalhePage() {
   const { id } = useParams();
@@ -106,40 +107,75 @@ function ProdutoDetalhePage() {
     );
   }
 
+  const subtotal = produto.preco * quantidade;
+
   return (
     <div className="container">
-      <h1>Detalhe do Produto</h1>
+      <div className={styles.wrap}>
+        <div className={styles.left}>
+          <div className={styles.title}>
+            <div className={styles.name}>{produto.nome}</div>
+            <div className={styles.idTag}>ID #{produto.id}</div>
+          </div>
 
-      <p><strong>ID:</strong> {produto.id}</p>
-      <p><strong>Nome:</strong> {produto.nome}</p>
-      <p><strong>Preço:</strong> R$ {produto.preco}</p>
+          <div className={styles.price}>R$ {produto.preco.toFixed(2)}</div>
 
-      <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "12px 0" }}>
-        <button type="button" onClick={diminuirQuantidade} disabled={adicionando}>
-          -
-        </button>
+          <div className={styles.meta}>
+            <span className="badge">disponível</span>
+            {"ativo" in produto && (
+              <span className="badge">{produto.ativo ? "ativo" : "inativo"}</span>
+            )}
+          </div>
 
-        <input
-          type="number"
-          min={1}
-          value={quantidade}
-          onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value)))}
-          disabled={adicionando}
-          style={{ width: 70, textAlign: "center" }}
-        />
+          <div className={styles.row}>
+            <span className={styles.qtyLabel}>quantidade</span>
+            <div className={styles.qtyBox}>
+              <button type="button" className={styles.qtyBtn} onClick={diminuirQuantidade} disabled={adicionando}>
+                -
+              </button>
 
-        <button type="button" onClick={aumentarQuantidade} disabled={adicionando}>
-          +
-        </button>
+              <input
+                className={styles.qtyInput}
+                type="number"
+                min={1}
+                value={quantidade}
+                onChange={(e) => setQuantidade(Math.max(1, Number(e.target.value)))}
+                disabled={adicionando}
+              />
+
+              <button type="button" className={styles.qtyBtn} onClick={aumentarQuantidade} disabled={adicionando}>
+                +
+              </button>
+            </div>
+          </div>
+
+          <p className={styles.small}>
+            subtotal estimado: <strong>r$ {subtotal.toFixed(2)}</strong>
+          </p>
+        </div>
+
+        <div className={styles.right}>
+          <h2>Finalizar</h2>
+
+          <div className={styles.cta}>
+            <button className={`btnPrimary ${styles.primary}`} onClick={handleAdicionarAoCarrinho} disabled={adicionando}>
+              {adicionando ? "Adicionando..." : "Adicionar ao Carrinho"}
+            </button>
+
+            <Link className={`card ${styles.secondary}`} to="/carrinho">
+              Ir para o carrinho →
+            </Link>
+
+            <Link className={`card ${styles.secondary}`} to="/produtos">
+              ← Voltar para produtos
+            </Link>
+          </div>
+
+          <p className={styles.small}>
+            dica: você pode adicionar mais itens e finalizar no checkout quando quiser.
+          </p>
+        </div>
       </div>
-
-      <button onClick={handleAdicionarAoCarrinho} disabled={adicionando}>
-        {adicionando ? "Adicionando..." : "Adicionar ao Carrinho"}
-      </button>
-
-      <p>
-        <Link to="/produtos">← Voltar para Produtos</Link>
-      </p>
     </div>
   );
 }
