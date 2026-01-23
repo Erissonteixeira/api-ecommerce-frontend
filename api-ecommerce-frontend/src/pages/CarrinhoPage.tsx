@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Carrinho } from "../types/carrinho";
 import { obterOuCriarCarrinho, removerItemDoCarrinho } from "../services/carrinhoService";
+import styles from "./CarrinhoPage.module.css";
 
 function CarrinhoPage() {
   const [carrinho, setCarrinho] = useState<Carrinho | null>(null);
@@ -53,6 +55,9 @@ function CarrinhoPage() {
       <div className="container">
         <h1>Carrinho</h1>
         <p>{erro}</p>
+        <p>
+          <Link to="/produtos">Voltar para Produtos</Link>
+        </p>
       </div>
     );
   }
@@ -66,49 +71,84 @@ function CarrinhoPage() {
     );
   }
 
+  const total = carrinho.total;
+
   return (
     <div className="container">
-      <h1>Carrinho</h1>
+      <div className={styles.header}>
+        <div className={styles.title}>
+          <h1>Carrinho</h1>
+          <div className={styles.subtitle}>revise seus itens antes de finalizar o pedido</div>
+        </div>
+
+        <span className="badge">{carrinho.itens.length} item(ns)</span>
+      </div>
 
       {carrinho.itens.length === 0 ? (
-        <p>Seu carrinho está vazio.</p>
+        <div className={styles.empty}>
+          <p>Seu carrinho está vazio.</p>
+          <p>
+            <Link to="/produtos" className={styles.linkCard}>
+              Ver produtos →
+            </Link>
+          </p>
+        </div>
       ) : (
-        <>
-          <ul style={{ display: "grid", gap: 12, padding: 0, listStyle: "none" }}>
+        <div className={styles.grid}>
+          <div className={styles.list}>
             {carrinho.itens.map((item) => {
               const subtotal = item.produto.preco * item.quantidade;
               const desabilitado = removendoProdutoId === item.produto.id;
 
               return (
-                <li
-                  key={item.produto.id}
-                  style={{
-                    border: "1px solid #ddd",
-                    borderRadius: 8,
-                    padding: 12,
-                    display: "grid",
-                    gap: 6,
-                  }}
-                >
-                  <strong>{item.produto.nome}</strong>
+                <div key={item.produto.id} className={styles.item}>
+                  <div className={styles.itemTop}>
+                    <div>
+                      <div className={styles.name}>{item.produto.nome}</div>
+                      <div className={styles.badges}>
+                        <span className="badge">id #{item.produto.id}</span>
+                        <span className="badge">quantidade {item.quantidade}</span>
+                      </div>
+                    </div>
 
-                  <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                    <span>quantidade: {item.quantidade}</span>
-                    <span>preço: r$ {item.produto.preco.toFixed(2)}</span>
-                    <span>subtotal: r$ {subtotal.toFixed(2)}</span>
+                    <button
+                      className="btnDanger"
+                      onClick={() => handleRemover(item.produto.id)}
+                      disabled={desabilitado}
+                    >
+                      {desabilitado ? "Removendo..." : "Remover"}
+                    </button>
                   </div>
 
-                  <button onClick={() => handleRemover(item.produto.id)} disabled={desabilitado}>
-                    {desabilitado ? "Removendo..." : "Remover"}
-                  </button>
-                </li>
+                  <div className={styles.metaRow}>
+                    <span>
+                      preço: <strong>r$ {item.produto.preco.toFixed(2)}</strong>
+                    </span>
+                    <span>
+                      subtotal: <strong>r$ {subtotal.toFixed(2)}</strong>
+                    </span>
+                  </div>
+                </div>
               );
             })}
-          </ul>
+          </div>
 
-          <hr style={{ margin: "16px 0" }} />
-          <h2>Total: r$ {carrinho.total.toFixed(2)}</h2>
-        </>
+          <aside className={styles.side}>
+            <span className="badge">resumo</span>
+            <div className={styles.total}>R$ {total.toFixed(2)}</div>
+            <div className={styles.subtitle}>total do carrinho</div>
+
+            <div className={styles.sideActions}>
+              <Link className={styles.linkCard} to="/checkout">
+                Ir para o checkout →
+              </Link>
+
+              <Link className={styles.linkCard} to="/produtos">
+                Continuar comprando →
+              </Link>
+            </div>
+          </aside>
+        </div>
       )}
     </div>
   );
