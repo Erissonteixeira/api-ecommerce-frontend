@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import type { Carrinho } from "../types/carrinho";
 import { obterOuCriarCarrinho, limparCarrinhoLocal } from "../services/carrinhoService";
 import { finalizarPedido } from "../services/pedidoService";
-import type { Pedido } from "../types/pedido";
+import styles from "./CheckoutPage.module.css";
 
 function CheckoutPage() {
   const [carrinho, setCarrinho] = useState<Carrinho | null>(null);
-  const [pedido, setPedido] = useState<Pedido | null>(null);
   const [carregando, setCarregando] = useState(true);
-  const [finalizando, setFinalizando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [finalizando, setFinalizando] = useState(false);
+  const [finalizado, setFinalizado] = useState(false);
 
   useEffect(() => {
     async function carregar() {
@@ -31,22 +31,15 @@ function CheckoutPage() {
 
   async function handleFinalizar() {
     if (!carrinho) return;
-    if (carrinho.itens.length === 0) {
-      alert("Seu carrinho está vazio.");
-      return;
-    }
 
     try {
       setFinalizando(true);
-      setErro(null);
-
-      const p = await finalizarPedido(carrinho.id);
-      setPedido(p);
-
+      await finalizarPedido(carrinho.id);
       limparCarrinhoLocal();
+      setFinalizado(true);
       setCarrinho(null);
-    } catch (e: any) {
-      setErro(e?.message ?? "Não foi possível finalizar o pedido.");
+    } catch {
+      alert("Erro ao finalizar pedido.");
     } finally {
       setFinalizando(false);
     }
@@ -73,18 +66,34 @@ function CheckoutPage() {
     );
   }
 
-  if (pedido) {
+  if (finalizado) {
     return (
       <div className="container">
-        <h1>Pedido finalizado com sucesso</h1>
-        <p>Seu pedido foi criado.</p>
+        <div className={styles.success}>
+          <div className={styles.successTitle}>Pedido finalizado com sucesso 🎉</div>
+          <div className={styles.successSub}>Seu pedido foi criado e já está em processamento.</div>
 
-        <pre style={{ overflow: "auto", padding: 12, border: "1px solid #ddd", borderRadius: 8 }}>
-          {JSON.stringify(pedido, null, 2)}
-        </pre>
+          <div style={{ display: "grid", gap: 10, justifyItems: "center" }}>
+            <Link to="/produtos">
+              <button className="btnPrimary">Voltar para produtos</button>
+            </Link>
 
+            <Link to="/carrinho" style={{ color: "var(--muted)", fontWeight: 700 }}>
+              Ver carrinho
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!carrinho || carrinho.itens.length === 0) {
+    return (
+      <div className="container">
+        <h1>Checkout</h1>
+        <p>Seu carrinho está vazio.</p>
         <p>
-          <Link to="/produtos">Ir para Produtos</Link>
+          <Link to="/produtos">Ver produtos</Link>
         </p>
       </div>
     );
@@ -92,44 +101,36 @@ function CheckoutPage() {
 
   return (
     <div className="container">
-      <h1>Checkout</h1>
+      <div className={styles.header}>
+        <h1>Checkout</h1>
+        <div className={styles.subtitle}>confira os itens antes de finalizar</div>
+      </div>
 
-      {!carrinho || carrinho.itens.length === 0 ? (
-        <>
-          <p>Seu carrinho está vazio.</p>
-          <p>
-            <Link to="/produtos">Ver produtos</Link>
-          </p>
-        </>
-      ) : (
-        <>
-          <h2>Resumo</h2>
+      <div className={styles.grid}>
+        <div className={styles.card}>
+          {carrinho.itens.map((item) => (
+            <div key={item.produto.id} className={styles.item}>
+              <div>
+                {item.produto.nome} <span>x{item.quantidade}</span>
+              </div>
+              <div>R$ {(item.produto.preco * item.quantidade).toFixed(2)}</div>
+            </div>
+          ))}
+        </div>
 
-          <ul style={{ display: "grid", gap: 10, padding: 0, listStyle: "none" }}>
-            {carrinho.itens.map((item) => (
-              <li
-                key={item.produto.id}
-                style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}
-              >
-                <strong>{item.produto.nome}</strong>
-                <div>quantidade: {item.quantidade}</div>
-                <div>preço: r$ {item.produto.preco.toFixed(2)}</div>
-                <div>subtotal: r$ {(item.produto.preco * item.quantidade).toFixed(2)}</div>
-              </li>
-            ))}
-          </ul>
+        <div className={styles.card}>
+          <span className="badge">total</span>
+          <div className={styles.total}>R$ {carrinho.total.toFixed(2)}</div>
 
-          <h2>Total: r$ {carrinho.total.toFixed(2)}</h2>
-
-          <button onClick={handleFinalizar} disabled={finalizando}>
+          <button className={`btnPrimary ${styles.cta}`} onClick={handleFinalizar} disabled={finalizando}>
             {finalizando ? "Finalizando..." : "Finalizar pedido"}
           </button>
 
-          <p>
-            <Link to="/carrinho">Voltar para o carrinho</Link>
-          </p>
-        </>
-      )}
+          <Link to="/carrinho" style={{ color: "var(--muted)", fontWeight: 800 }}>
+            Voltar para o carrinho
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
