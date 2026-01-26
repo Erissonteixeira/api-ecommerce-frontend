@@ -3,10 +3,13 @@ import { Link, useParams } from "react-router-dom";
 import { buscarProdutoPorId } from "../services/produtosService";
 import { obterOuCriarCarrinho, adicionarItemAoCarrinho } from "../services/carrinhoService";
 import type { Produto } from "../types/produto";
+import { useToastContext } from "../contexts/ToastContext";
 import styles from "./ProdutoDetalhePage.module.css";
 
 function ProdutoDetalhePage() {
   const { id } = useParams();
+  const { toast } = useToastContext();
+
   const [produto, setProduto] = useState<Produto | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -43,7 +46,7 @@ function ProdutoDetalhePage() {
 
     const qtd = Number(quantidade);
     if (!Number.isFinite(qtd) || qtd < 1) {
-      alert("Quantidade inválida");
+      toast.error("Quantidade inválida", "Informe um número maior ou igual a 1.");
       return;
     }
 
@@ -58,9 +61,12 @@ function ProdutoDetalhePage() {
         quantidade: qtd,
       });
 
-      alert("Produto adicionado ao carrinho");
-    } catch {
-      alert("Erro ao adicionar produto ao carrinho");
+      toast.success("Adicionado ao carrinho", `${produto.nome} (${qtd}x) foi adicionado.`);
+    } catch (e: unknown) {
+      const maybeMessage =
+        typeof e === "object" && e !== null && "message" in e ? String((e as any).message) : undefined;
+
+      toast.error("Não foi possível adicionar", maybeMessage || "Tente novamente em alguns segundos.");
     } finally {
       setAdicionando(false);
     }
@@ -122,9 +128,7 @@ function ProdutoDetalhePage() {
 
           <div className={styles.meta}>
             <span className="badge">disponível</span>
-            {"ativo" in produto && (
-              <span className="badge">{produto.ativo ? "ativo" : "inativo"}</span>
-            )}
+            {"ativo" in produto && <span className="badge">{produto.ativo ? "ativo" : "inativo"}</span>}
           </div>
 
           <div className={styles.row}>
@@ -171,9 +175,7 @@ function ProdutoDetalhePage() {
             </Link>
           </div>
 
-          <p className={styles.small}>
-            dica: você pode adicionar mais itens e finalizar no checkout quando quiser.
-          </p>
+          <p className={styles.small}>dica: você pode adicionar mais itens e finalizar no checkout quando quiser.</p>
         </div>
       </div>
     </div>

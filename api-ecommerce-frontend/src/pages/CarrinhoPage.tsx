@@ -2,9 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Carrinho } from "../types/carrinho";
 import { obterOuCriarCarrinho, removerItemDoCarrinho } from "../services/carrinhoService";
+import { useToastContext } from "../contexts/ToastContext";
 import styles from "./CarrinhoPage.module.css";
 
 function CarrinhoPage() {
+  const { toast } = useToastContext();
+
   const [carrinho, setCarrinho] = useState<Carrinho | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -30,12 +33,20 @@ function CarrinhoPage() {
   async function handleRemover(produtoId: number) {
     if (!carrinho) return;
 
+    const item = carrinho.itens.find((i) => i.produto.id === produtoId);
+    const nome = item?.produto.nome;
+
     try {
       setRemovendoProdutoId(produtoId);
       const atualizado = await removerItemDoCarrinho(carrinho.id, produtoId);
       setCarrinho(atualizado);
-    } catch {
-      alert("Erro ao remover item do carrinho");
+
+      toast.success("Item removido", nome ? `${nome} foi removido do carrinho.` : "O item foi removido do carrinho.");
+    } catch (e: unknown) {
+      const maybeMessage =
+        typeof e === "object" && e !== null && "message" in e ? String((e as any).message) : undefined;
+
+      toast.error("Não foi possível remover", maybeMessage || "Tente novamente em alguns segundos.");
     } finally {
       setRemovendoProdutoId(null);
     }
@@ -111,11 +122,7 @@ function CarrinhoPage() {
                       </div>
                     </div>
 
-                    <button
-                      className="btnDanger"
-                      onClick={() => handleRemover(item.produto.id)}
-                      disabled={desabilitado}
-                    >
+                    <button className="btnDanger" onClick={() => handleRemover(item.produto.id)} disabled={desabilitado}>
                       {desabilitado ? "Removendo..." : "Remover"}
                     </button>
                   </div>
