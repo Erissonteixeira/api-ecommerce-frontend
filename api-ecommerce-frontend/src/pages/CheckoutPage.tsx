@@ -3,9 +3,12 @@ import { Link } from "react-router-dom";
 import type { Carrinho } from "../types/carrinho";
 import { obterOuCriarCarrinho, limparCarrinhoLocal } from "../services/carrinhoService";
 import { finalizarPedido } from "../services/pedidoService";
+import { useToastContext } from "../contexts/ToastContext";
 import styles from "./CheckoutPage.module.css";
 
 function CheckoutPage() {
+  const { toast } = useToastContext();
+
   const [carrinho, setCarrinho] = useState<Carrinho | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -38,8 +41,13 @@ function CheckoutPage() {
       limparCarrinhoLocal();
       setFinalizado(true);
       setCarrinho(null);
-    } catch {
-      alert("Erro ao finalizar pedido.");
+
+      toast.success("Pedido finalizado", "Seu pedido foi criado com sucesso.");
+    } catch (e: unknown) {
+      const maybeMessage =
+        typeof e === "object" && e !== null && "message" in e ? String((e as any).message) : undefined;
+
+      toast.error("Erro ao finalizar", maybeMessage || "Tente novamente em alguns segundos.");
     } finally {
       setFinalizando(false);
     }
