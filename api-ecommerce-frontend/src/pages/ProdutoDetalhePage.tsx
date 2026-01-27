@@ -5,6 +5,7 @@ import { obterOuCriarCarrinho, adicionarItemAoCarrinho } from "../services/carri
 import type { Produto } from "../types/produto";
 import { useToastContext } from "../contexts/ToastContext";
 import { userMessageFromError } from "../utils/userMessage";
+import { toastTexts } from "../utils/toastTexts";
 import styles from "./ProdutoDetalhePage.module.css";
 
 function ProdutoDetalhePage() {
@@ -62,10 +63,10 @@ function ProdutoDetalhePage() {
         quantidade: qtd,
       });
 
-      toast.success("Adicionado ao carrinho", `${produto.nome} (${qtd}x) foi adicionado.`);
+      toast.success(toastTexts.carrinho.addSuccessTitle, toastTexts.carrinho.addSuccessMessage(produto.nome, qtd));
     } catch (e: unknown) {
-      const msg = userMessageFromError(e, "Tente novamente em alguns segundos.");
-      toast.error("Não foi possível adicionar", msg);
+      const msg = userMessageFromError(e, toastTexts.fallback.tryAgain);
+      toast.error(toastTexts.carrinho.addErrorTitle, msg);
     } finally {
       setAdicionando(false);
     }

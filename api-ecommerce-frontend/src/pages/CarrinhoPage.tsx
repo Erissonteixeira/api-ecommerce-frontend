@@ -4,6 +4,7 @@ import type { Carrinho } from "../types/carrinho";
 import { obterOuCriarCarrinho, removerItemDoCarrinho } from "../services/carrinhoService";
 import { useToastContext } from "../contexts/ToastContext";
 import { userMessageFromError } from "../utils/userMessage";
+import { toastTexts } from "../utils/toastTexts";
 import styles from "./CarrinhoPage.module.css";
 
 function CarrinhoPage() {
@@ -42,10 +43,10 @@ function CarrinhoPage() {
       const atualizado = await removerItemDoCarrinho(carrinho.id, produtoId);
       setCarrinho(atualizado);
 
-      toast.success("Item removido", nome ? `${nome} foi removido do carrinho.` : "Item removido do carrinho.");
+      toast.success(toastTexts.carrinho.removeSuccessTitle, toastTexts.carrinho.removeSuccessMessage(nome));
     } catch (e: unknown) {
-      const msg = userMessageFromError(e, "Tente novamente em alguns segundos.");
-      toast.error("Não foi possível remover", msg);
+      const msg = userMessageFromError(e, toastTexts.fallback.tryAgain);
+      toast.error(toastTexts.carrinho.removeErrorTitle, msg);
     } finally {
       setRemovendoProdutoId(null);
     }
