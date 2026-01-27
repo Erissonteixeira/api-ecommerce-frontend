@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { Carrinho } from "../types/carrinho";
 import { obterOuCriarCarrinho, removerItemDoCarrinho } from "../services/carrinhoService";
 import { useToastContext } from "../contexts/ToastContext";
+import { userMessageFromError } from "../utils/userMessage";
 import styles from "./CarrinhoPage.module.css";
 
 function CarrinhoPage() {
@@ -41,12 +42,10 @@ function CarrinhoPage() {
       const atualizado = await removerItemDoCarrinho(carrinho.id, produtoId);
       setCarrinho(atualizado);
 
-      toast.success("Item removido", nome ? `${nome} foi removido do carrinho.` : "O item foi removido do carrinho.");
+      toast.success("Item removido", nome ? `${nome} foi removido do carrinho.` : "Item removido do carrinho.");
     } catch (e: unknown) {
-      const maybeMessage =
-        typeof e === "object" && e !== null && "message" in e ? String((e as any).message) : undefined;
-
-      toast.error("Não foi possível remover", maybeMessage || "Tente novamente em alguns segundos.");
+      const msg = userMessageFromError(e, "Tente novamente em alguns segundos.");
+      toast.error("Não foi possível remover", msg);
     } finally {
       setRemovendoProdutoId(null);
     }

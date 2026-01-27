@@ -4,6 +4,7 @@ import type { Carrinho } from "../types/carrinho";
 import { obterOuCriarCarrinho, limparCarrinhoLocal } from "../services/carrinhoService";
 import { finalizarPedido } from "../services/pedidoService";
 import { useToastContext } from "../contexts/ToastContext";
+import { userMessageFromError } from "../utils/userMessage";
 import styles from "./CheckoutPage.module.css";
 
 function CheckoutPage() {
@@ -44,10 +45,8 @@ function CheckoutPage() {
 
       toast.success("Pedido finalizado", "Seu pedido foi criado com sucesso.");
     } catch (e: unknown) {
-      const maybeMessage =
-        typeof e === "object" && e !== null && "message" in e ? String((e as any).message) : undefined;
-
-      toast.error("Erro ao finalizar", maybeMessage || "Tente novamente em alguns segundos.");
+      const msg = userMessageFromError(e, "Tente novamente em alguns segundos.");
+      toast.error("Erro ao finalizar", msg);
     } finally {
       setFinalizando(false);
     }

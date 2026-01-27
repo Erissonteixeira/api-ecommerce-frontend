@@ -4,6 +4,7 @@ import { buscarProdutoPorId } from "../services/produtosService";
 import { obterOuCriarCarrinho, adicionarItemAoCarrinho } from "../services/carrinhoService";
 import type { Produto } from "../types/produto";
 import { useToastContext } from "../contexts/ToastContext";
+import { userMessageFromError } from "../utils/userMessage";
 import styles from "./ProdutoDetalhePage.module.css";
 
 function ProdutoDetalhePage() {
@@ -63,10 +64,8 @@ function ProdutoDetalhePage() {
 
       toast.success("Adicionado ao carrinho", `${produto.nome} (${qtd}x) foi adicionado.`);
     } catch (e: unknown) {
-      const maybeMessage =
-        typeof e === "object" && e !== null && "message" in e ? String((e as any).message) : undefined;
-
-      toast.error("Não foi possível adicionar", maybeMessage || "Tente novamente em alguns segundos.");
+      const msg = userMessageFromError(e, "Tente novamente em alguns segundos.");
+      toast.error("Não foi possível adicionar", msg);
     } finally {
       setAdicionando(false);
     }
@@ -128,7 +127,6 @@ function ProdutoDetalhePage() {
 
           <div className={styles.meta}>
             <span className="badge">disponível</span>
-            {"ativo" in produto && <span className="badge">{produto.ativo ? "ativo" : "inativo"}</span>}
           </div>
 
           <div className={styles.row}>
