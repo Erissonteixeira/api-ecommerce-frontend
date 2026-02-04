@@ -1,0 +1,108 @@
+.wrap {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+}
+
+@media (max-width: 860px) {
+  .wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+.left,
+.right {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+}
+
+.title {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.name {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+.idTag {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  white-space: nowrap;
+}
+
+.price {
+  font-size: 34px;
+  font-weight: 950;
+  letter-spacing: -0.04em;
+  margin: 6px 0 10px 0;
+}
+
+.meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.qtyLabel {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.qtyBox {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.qtyBtn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  padding: 0;
+}
+
+.qtyInput {
+  width: 80px;
+  text-align: center;
+}
+
+.cta {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.primary {
+  width: 100%;
+}
+
+.secondary {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.small {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
