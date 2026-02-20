@@ -7,6 +7,7 @@ import { useToastContext } from "../contexts/ToastContext";
 import { userMessageFromError } from "../utils/userMessage";
 import { toastTexts } from "../utils/toastTexts";
 import styles from "./UsuarioFormPage.module.css";
+import { maskWhatsapp } from "../utils/masks";
 
 function UsuarioFormPage() {
   const { toast } = useToastContext();
@@ -51,7 +52,7 @@ function UsuarioFormPage() {
           email: u.email ?? "",
           whatsapp: u.whatsapp ?? "",
           cpf: u.cpf ?? "",
-          senha: "", // regra atual: senha obrigatória no update
+          senha: "",
         });
       } catch {
         setErro("Não foi possível carregar o usuário.");
@@ -83,11 +84,16 @@ function UsuarioFormPage() {
       setErro(null);
       setFieldErrors(undefined);
 
+      const payload: UsuarioRequest = {
+        ...form,
+        whatsapp: maskWhatsapp(form.whatsapp),
+      };
+
       if (editando && usuarioId !== null) {
-        await atualizarUsuario(usuarioId, form);
+        await atualizarUsuario(usuarioId, payload);
         toast.success(toastTexts.usuarios.updateSuccessTitle, toastTexts.usuarios.updateSuccessMessage);
       } else {
-        await criarUsuario(form);
+        await criarUsuario(payload);
         toast.success(toastTexts.usuarios.createSuccessTitle, toastTexts.usuarios.createSuccessMessage);
       }
 
@@ -163,8 +169,9 @@ function UsuarioFormPage() {
             <input
               className={styles.input}
               value={form.whatsapp}
-              onChange={(e) => setValue("whatsapp", e.target.value)}
+              onChange={(e) => setValue("whatsapp", maskWhatsapp(e.target.value))}
               inputMode="tel"
+              placeholder="99 99999-9999"
             />
           </label>
 
