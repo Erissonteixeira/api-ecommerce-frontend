@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { ApiError } from "../types/apiError";
 import type { UsuarioRequest } from "../types/usuario";
@@ -13,6 +13,8 @@ function UsuarioFormPage() {
   const { toast } = useToastContext();
   const navigate = useNavigate();
   const params = useParams();
+
+  const whatsappRef = useRef<HTMLInputElement>(null);
 
   const usuarioId = useMemo(() => {
     const raw = params.id;
@@ -84,17 +86,25 @@ function UsuarioFormPage() {
       setErro(null);
       setFieldErrors(undefined);
 
+      const rawWhatsapp = whatsappRef.current?.value ?? form.whatsapp;
+
       const payload: UsuarioRequest = {
         ...form,
-        whatsapp: maskWhatsapp(form.whatsapp),
+        whatsapp: maskWhatsapp(rawWhatsapp),
       };
 
       if (editando && usuarioId !== null) {
         await atualizarUsuario(usuarioId, payload);
-        toast.success(toastTexts.usuarios.updateSuccessTitle, toastTexts.usuarios.updateSuccessMessage);
+        toast.success(
+          toastTexts.usuarios.updateSuccessTitle,
+          toastTexts.usuarios.updateSuccessMessage
+        );
       } else {
         await criarUsuario(payload);
-        toast.success(toastTexts.usuarios.createSuccessTitle, toastTexts.usuarios.createSuccessMessage);
+        toast.success(
+          toastTexts.usuarios.createSuccessTitle,
+          toastTexts.usuarios.createSuccessMessage
+        );
       }
 
       navigate("/usuarios");
@@ -148,7 +158,11 @@ function UsuarioFormPage() {
         <div className={styles.row}>
           <label className={styles.label}>
             nome
-            <input className={styles.input} value={form.nome} onChange={(e) => setValue("nome", e.target.value)} />
+            <input
+              className={styles.input}
+              value={form.nome}
+              onChange={(e) => setValue("nome", e.target.value)}
+            />
           </label>
 
           <label className={styles.label}>
@@ -167,6 +181,7 @@ function UsuarioFormPage() {
           <label className={styles.label}>
             whatsapp
             <input
+              ref={whatsappRef}
               className={styles.input}
               value={form.whatsapp}
               onChange={(e) => setValue("whatsapp", maskWhatsapp(e.target.value))}
@@ -199,7 +214,9 @@ function UsuarioFormPage() {
 
           <div className={styles.hint}>
             <span className="badge">regra</span>
-            <div className={styles.hintText}>mín. 8 caracteres + 1 maiúscula + 1 especial</div>
+            <div className={styles.hintText}>
+              mín. 8 caracteres + 1 maiúscula + 1 especial
+            </div>
           </div>
         </div>
 
