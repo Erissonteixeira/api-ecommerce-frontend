@@ -5,6 +5,8 @@ import ProdutoDetalhePage from "./pages/ProdutoDetalhePage";
 import CarrinhoPage from "./pages/CarrinhoPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import { ToastProvider } from "./contexts/ToastContext";
+import UsuariosPage from "./pages/UsuariosPage";
+import UsuarioFormPage from "./pages/UsuarioFormPage";
 
 function App() {
   return (
@@ -16,7 +18,10 @@ function App() {
         <Route path="/produtos/:id" element={<ProdutoDetalhePage />} />
         <Route path="/carrinho" element={<CarrinhoPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
-      </Routes>
+        <Route path="/usuarios" element={<UsuariosPage />} />
+        <Route path="/usuarios/novo" element={<UsuarioFormPage />} />
+        <Route path="/usuarios/:id/editar" element={<UsuarioFormPage />} />
+        </Routes>
     </ToastProvider>
   );
 }

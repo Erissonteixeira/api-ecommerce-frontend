@@ -31,6 +31,12 @@ function Header() {
           >
             Checkout
           </NavLink>
+          <NavLink
+           to="/usuarios"
+           className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
+          >
+           Usuários
+          </NavLink>
         </nav>
       </div>
     </header>
