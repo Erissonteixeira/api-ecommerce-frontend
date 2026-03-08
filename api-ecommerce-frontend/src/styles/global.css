@@ -129,3 +129,17 @@ input[type="text"]:focus {
 .btnDanger:hover {
   border-color: rgba(239, 68, 68, 0.9);
 }
+input[type="email"],
+input[type="password"] {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: 10px;
+  outline: none;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  border-color: rgba(79, 70, 229, 0.6);
+}
