@@ -1,15 +1,22 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useToastContext } from "../contexts/ToastContext";
 import type { ApiError } from "../types/apiError";
 import { userMessageFromError } from "../utils/userMessage";
 import styles from "./LoginPage.module.css";
 
+type LocationState = {
+  from?: {
+    pathname?: string;
+  };
+};
+
 function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToastContext();
-  const { login, isAuthenticated, loading } = useAuthContext();
+  const { login } = useAuthContext();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -17,9 +24,8 @@ function LoginPage() {
   const [erro, setErro] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string> | undefined>(undefined);
 
-  if (!loading && isAuthenticated) {
-    return <Navigate to="/produtos" replace />;
-  }
+  const state = location.state as LocationState | null;
+  const destino = state?.from?.pathname || "/produtos";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,13 +35,10 @@ function LoginPage() {
       setErro(null);
       setFieldErrors(undefined);
 
-      await login({
-        email,
-        senha,
-      });
+      await login({ email, senha });
 
       toast.success("Login realizado", "Sessão iniciada com sucesso.");
-      navigate("/produtos");
+      navigate(destino, { replace: true });
     } catch (error) {
       const apiError = error as ApiError;
       if (apiError.message) setErro(apiError.message);

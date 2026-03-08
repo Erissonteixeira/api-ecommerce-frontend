@@ -22,8 +22,8 @@ function CarrinhoPage() {
         setErro(null);
         const c = await obterOuCriarCarrinho();
         setCarrinho(c);
-      } catch {
-        setErro("Não foi possível carregar o carrinho.");
+      } catch (e: unknown) {
+        setErro(userMessageFromError(e, "Não foi possível carregar o carrinho."));
       } finally {
         setCarregando(false);
       }

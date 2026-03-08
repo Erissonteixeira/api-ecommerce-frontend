@@ -1,9 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../contexts/AuthContext";
 import styles from "./Header.module.css";
 
 function Header() {
+  const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuthContext();
+
+  function handleLogout() {
+    logout();
+    navigate("/login", { replace: true });
+  }
 
   return (
     <header className={styles.header}>
@@ -22,20 +28,6 @@ function Header() {
           </NavLink>
 
           <NavLink
-            to="/carrinho"
-            className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
-          >
-            Carrinho
-          </NavLink>
-
-          <NavLink
-            to="/checkout"
-            className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
-          >
-            Checkout
-          </NavLink>
-
-          <NavLink
             to="/usuarios"
             className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
           >
@@ -44,8 +36,22 @@ function Header() {
 
           {isAuthenticated ? (
             <>
+              <NavLink
+                to="/carrinho"
+                className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
+              >
+                Carrinho
+              </NavLink>
+
+              <NavLink
+                to="/checkout"
+                className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
+              >
+                Checkout
+              </NavLink>
+
               <span className="badge">{user?.nome ?? "Usuário"}</span>
-              <button onClick={logout}>Sair</button>
+              <button onClick={handleLogout}>Sair</button>
             </>
           ) : (
             <>

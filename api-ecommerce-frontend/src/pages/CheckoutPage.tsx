@@ -24,8 +24,8 @@ function CheckoutPage() {
         setErro(null);
         const c = await obterOuCriarCarrinho();
         setCarrinho(c);
-      } catch {
-        setErro("Não foi possível carregar o carrinho para checkout.");
+      } catch (e: unknown) {
+        setErro(userMessageFromError(e, "Não foi possível carregar o carrinho para checkout."));
       } finally {
         setCarregando(false);
       }
