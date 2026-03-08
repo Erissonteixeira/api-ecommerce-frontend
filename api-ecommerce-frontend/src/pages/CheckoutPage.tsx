@@ -39,12 +39,15 @@ function CheckoutPage() {
 
     try {
       setFinalizando(true);
-      await finalizarPedido(carrinho.id);
+      await finalizarPedido();
       limparCarrinhoLocal();
       setFinalizado(true);
       setCarrinho(null);
 
-      toast.success(toastTexts.pedido.checkoutSuccessTitle, toastTexts.pedido.checkoutSuccessMessage);
+      toast.success(
+        toastTexts.pedido.checkoutSuccessTitle,
+        toastTexts.pedido.checkoutSuccessMessage
+      );
     } catch (e: unknown) {
       const msg = userMessageFromError(e, toastTexts.fallback.tryAgain);
       toast.error(toastTexts.pedido.checkoutErrorTitle, msg);
@@ -117,11 +120,11 @@ function CheckoutPage() {
       <div className={styles.grid}>
         <div className={styles.card}>
           {carrinho.itens.map((item) => (
-            <div key={item.produto.id} className={styles.item}>
+            <div key={item.produtoId} className={styles.item}>
               <div>
-                {item.produto.nome} <span>x{item.quantidade}</span>
+                {item.nomeProduto} <span>x{item.quantidade}</span>
               </div>
-              <div>R$ {(item.produto.preco * item.quantidade).toFixed(2)}</div>
+              <div>R$ {(item.precoUnitario * item.quantidade).toFixed(2)}</div>
             </div>
           ))}
         </div>
@@ -130,7 +133,11 @@ function CheckoutPage() {
           <span className="badge">total</span>
           <div className={styles.total}>R$ {carrinho.total.toFixed(2)}</div>
 
-          <button className={`btnPrimary ${styles.cta}`} onClick={handleFinalizar} disabled={finalizando}>
+          <button
+            className={`btnPrimary ${styles.cta}`}
+            onClick={handleFinalizar}
+            disabled={finalizando}
+          >
             {finalizando ? "Finalizando..." : "Finalizar pedido"}
           </button>
 

@@ -1,52 +1,74 @@
-import type { ApiError } from "../types/apiError";
+import type { ApiError, FieldErrorItem } from "../types/apiError";
 
 const BASE_URL = "http://localhost:8080";
+const TOKEN_KEY = "authToken";
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
-function toRecordString(value: unknown): Record<string, string> | undefined {
-  if (!isObject(value)) return undefined;
+function toFieldErrors(value: unknown): Record<string, string> | undefined {
+  if (!Array.isArray(value)) return undefined;
 
   const result: Record<string, string> = {};
 
-  for (const [key, val] of Object.entries(value)) {
-    if (typeof val === "string") {
-      result[key] = val;
+  for (const item of value) {
+    if (!isObject(item)) continue;
+
+    const field = typeof item.field === "string" ? item.field : null;
+    const message = typeof item.message === "string" ? item.message : null;
+
+    if (field && message) {
+      result[field] = message;
     }
   }
 
   return Object.keys(result).length > 0 ? result : undefined;
 }
 
+function getAuthToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
 export async function request<T>(url: string, options?: RequestInit): Promise<T> {
+  const token = getAuthToken();
+
+  const headers = new Headers(options?.headers ?? {});
+  headers.set("Content-Type", "application/json");
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
   const response = await fetch(`${BASE_URL}${url}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
     ...options,
+    headers,
   });
 
   if (!response.ok) {
     let message = "Erro inesperado";
-    let errors: Record<string, string> | undefined = undefined;
+    let fieldErrors: Record<string, string> | undefined = undefined;
 
     try {
       const body: unknown = await response.json();
 
       if (isObject(body)) {
-        if (typeof body.message === "string") message = body.message;
-        if ("errors" in body) errors = toRecordString(body.errors);
+        if (typeof body.message === "string" && body.message.trim()) {
+          message = body.message;
+        }
+
+        if ("fieldErrors" in body) {
+          fieldErrors = toFieldErrors(body.fieldErrors as FieldErrorItem[]);
+        }
       }
     } catch {
-      // ignore
+      
     }
 
     const apiError: ApiError = {
       status: response.status,
       message,
-      errors,
+      fieldErrors,
     };
 
     throw apiError;

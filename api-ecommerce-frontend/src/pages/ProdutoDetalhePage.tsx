@@ -54,16 +54,17 @@ function ProdutoDetalhePage() {
 
     try {
       setAdicionando(true);
-      const carrinho = await obterOuCriarCarrinho();
+      await obterOuCriarCarrinho();
 
-      await adicionarItemAoCarrinho(carrinho.id, {
+      await adicionarItemAoCarrinho({
         produtoId: produto.id,
-        nomeProduto: produto.nome,
-        preco: produto.preco,
         quantidade: qtd,
       });
 
-      toast.success(toastTexts.carrinho.addSuccessTitle, toastTexts.carrinho.addSuccessMessage(produto.nome, qtd));
+      toast.success(
+        toastTexts.carrinho.addSuccessTitle,
+        toastTexts.carrinho.addSuccessMessage(produto.nome, qtd)
+      );
     } catch (e: unknown) {
       const msg = userMessageFromError(e, toastTexts.fallback.tryAgain);
       toast.error(toastTexts.carrinho.addErrorTitle, msg);

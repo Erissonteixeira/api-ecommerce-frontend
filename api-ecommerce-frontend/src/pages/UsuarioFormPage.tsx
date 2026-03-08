@@ -74,7 +74,7 @@ function UsuarioFormPage() {
     const e = err as ApiError;
     if (e && typeof e === "object") {
       if (typeof e.message === "string" && e.message.trim()) setErro(e.message);
-      if (e.errors) setFieldErrors(e.errors);
+      if (e.fieldErrors) setFieldErrors(e.fieldErrors);
     }
   }
 

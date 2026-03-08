@@ -3,7 +3,7 @@ export function userMessageFromError(error: unknown, fallback: string) {
     typeof error === "string"
       ? error
       : typeof error === "object" && error !== null && "message" in error
-        ? String((error as any).message)
+        ? String((error as { message?: unknown }).message ?? "")
         : "";
 
   const msg = raw.trim();

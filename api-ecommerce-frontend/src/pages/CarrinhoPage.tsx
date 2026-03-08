@@ -35,15 +35,18 @@ function CarrinhoPage() {
   async function handleRemover(produtoId: number) {
     if (!carrinho) return;
 
-    const item = carrinho.itens.find((i) => i.produto.id === produtoId);
-    const nome = item?.produto.nome;
+    const item = carrinho.itens.find((i) => i.produtoId === produtoId);
+    const nome = item?.nomeProduto;
 
     try {
       setRemovendoProdutoId(produtoId);
-      const atualizado = await removerItemDoCarrinho(carrinho.id, produtoId);
+      const atualizado = await removerItemDoCarrinho(produtoId);
       setCarrinho(atualizado);
 
-      toast.success(toastTexts.carrinho.removeSuccessTitle, toastTexts.carrinho.removeSuccessMessage(nome));
+      toast.success(
+        toastTexts.carrinho.removeSuccessTitle,
+        toastTexts.carrinho.removeSuccessMessage(nome)
+      );
     } catch (e: unknown) {
       const msg = userMessageFromError(e, toastTexts.fallback.tryAgain);
       toast.error(toastTexts.carrinho.removeErrorTitle, msg);
@@ -108,28 +111,32 @@ function CarrinhoPage() {
         <div className={styles.grid}>
           <div className={styles.list}>
             {carrinho.itens.map((item) => {
-              const subtotal = item.produto.preco * item.quantidade;
-              const desabilitado = removendoProdutoId === item.produto.id;
+              const subtotal = item.precoUnitario * item.quantidade;
+              const desabilitado = removendoProdutoId === item.produtoId;
 
               return (
-                <div key={item.produto.id} className={styles.item}>
+                <div key={item.produtoId} className={styles.item}>
                   <div className={styles.itemTop}>
                     <div>
-                      <div className={styles.name}>{item.produto.nome}</div>
+                      <div className={styles.name}>{item.nomeProduto}</div>
                       <div className={styles.badges}>
-                        <span className="badge">id #{item.produto.id}</span>
+                        <span className="badge">id #{item.produtoId}</span>
                         <span className="badge">quantidade {item.quantidade}</span>
                       </div>
                     </div>
 
-                    <button className="btnDanger" onClick={() => handleRemover(item.produto.id)} disabled={desabilitado}>
+                    <button
+                      className="btnDanger"
+                      onClick={() => handleRemover(item.produtoId)}
+                      disabled={desabilitado}
+                    >
                       {desabilitado ? "Removendo..." : "Remover"}
                     </button>
                   </div>
 
                   <div className={styles.metaRow}>
                     <span>
-                      preço: <strong>r$ {item.produto.preco.toFixed(2)}</strong>
+                      preço: <strong>r$ {item.precoUnitario.toFixed(2)}</strong>
                     </span>
                     <span>
                       subtotal: <strong>r$ {subtotal.toFixed(2)}</strong>

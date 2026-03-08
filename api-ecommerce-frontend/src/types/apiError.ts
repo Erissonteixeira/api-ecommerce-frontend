@@ -1,5 +1,10 @@
+export interface FieldErrorItem {
+  field: string;
+  message: string;
+}
+
 export interface ApiError {
   status: number;
   message: string;
-  errors?: Record<string, string>;
+  fieldErrors?: Record<string, string>;
 }
