@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
+import MeusPedidosPage from "./pages/MeusPedidosPage";
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/carrinho" element={<CarrinhoPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/meus-pedidos" element={<MeusPedidosPage />} />
+
             <Route path="/usuarios" element={<UsuariosPage />} />
             <Route path="/usuarios/novo" element={<UsuarioFormPage />} />
             <Route path="/usuarios/:id/editar" element={<UsuarioFormPage />} />

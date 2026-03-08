@@ -27,13 +27,6 @@ function Header() {
             Produtos
           </NavLink>
 
-          <NavLink
-            to="/usuarios"
-            className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
-          >
-            Usuários
-          </NavLink>
-
           {isAuthenticated ? (
             <>
               <NavLink
@@ -48,6 +41,13 @@ function Header() {
                 className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
               >
                 Checkout
+              </NavLink>
+
+              <NavLink
+                to="/meus-pedidos"
+                className={({ isActive }) => (isActive ? `${styles.link} ${styles.active}` : styles.link)}
+              >
+                Meus Pedidos
               </NavLink>
 
               <span className="badge">{user?.nome ?? "Usuário"}</span>
