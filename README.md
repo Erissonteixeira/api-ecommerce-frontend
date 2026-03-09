@@ -1,140 +1,289 @@
-# api-ecommerce-frontend
+# API E-commerce Frontend
 
-Front-end do projeto **api-ecommerce**, construído em **React + TypeScript + Vite**, integrado com o backend em **Spring Boot**.
+Front-end do projeto **api-ecommerce**, desenvolvido com **React + TypeScript + Vite**, integrado ao backend em **Spring Boot**.
 
-## Visão geral
+A aplicação fornece a interface de usuário para o sistema de e-commerce, permitindo cadastro, login, navegação de produtos, gerenciamento de carrinho e criação de pedidos.
 
-Este front consome a API do e-commerce e entrega os fluxos principais:
+---
 
-- Listagem de produtos  
-- Detalhe do produto com quantidade e subtotal em tempo real  
-- Carrinho (criação automática, adicionar e remover itens)  
-- Checkout (finalizar pedido)  
-- Feedback de UI padronizado com **toast** (sucesso/erro)  
-- Mensagens de erro humanizadas quando o backend está offline  
+# Visão geral
 
-## Stack
+Este front-end consome a API do e-commerce e implementa os principais fluxos da aplicação.
 
-- React 19  
-- TypeScript  
-- Vite  
-- React Router  
-- Vitest (testes)  
-- CSS Modules + estilos globais  
+Funcionalidades disponíveis:
 
-## Pré-requisitos
+- Cadastro de usuário
+- Login com autenticação JWT
+- Rotas protegidas para usuários autenticados
+- Listagem de produtos
+- Detalhe de produto com cálculo de subtotal em tempo real
+- Carrinho de compras (criação automática, adicionar e remover itens)
+- Checkout para finalização de pedido
+- Histórico de pedidos do usuário
+- Feedback visual padronizado com **toast**
+- Mensagens de erro humanizadas quando o backend está offline
 
-- Node.js (recomendado: versão LTS)  
-- Backend do projeto rodando em `http://localhost:8080`  
+A aplicação roda por padrão em:
 
-## Como rodar
+http://localhost:5173
 
-### 1) Subir o backend (Spring Boot)
+---
+
+# Stack
+
+- React 19
+- TypeScript
+- Vite
+- React Router
+- Context API
+- Vitest (testes)
+- CSS Modules
+- Estilos globais
+
+---
+
+# Pré-requisitos
+
+- Node.js (recomendado versão LTS)
+- Backend do projeto rodando em:
+
+http://localhost:8080
+
+O backend pode ser executado:
+
+- localmente
+- via Docker
+
+Para o front-end não há diferença, desde que a API esteja acessível.
+
+---
+
+# Como rodar
+
+## 1) Subir o backend
 
 Confirme que o backend está rodando na porta **8080**.
 
 Ambiente de desenvolvimento do backend:
 
-- Porta: `8080`  
-- Banco: `H2 em memória`  
-- Migrations: `Flyway`  
-- Console H2: `/h2-console`  
-- Swagger/OpenAPI: habilitado via `springdoc`  
+- Porta: `8080`
+- Banco: **H2 em memória**
+- Migrations: **Flyway**
+- Console H2: `/h2-console`
+- Swagger/OpenAPI: habilitado via **springdoc-openapi**
 
-> **Observação**  
-> O backend pode ser executado localmente ou via Docker.  
-> Para o front-end, não há diferença, desde que a API esteja acessível em `http://localhost:8080`.
+---
 
-### 2) Rodar o front-end
+## 2) Rodar o front-end
 
-Na raiz do projeto:
+Na raiz do projeto execute:
 
-```bash
-npm i
+npm install
+
 npm run dev
-```
-## A aplicação
 
-A aplicação front-end sobe em:
+A aplicação será iniciada em:
 
-- `http://localhost:5173`
+http://localhost:5173
 
-## Scripts disponíveis
+---
 
-- `npm run dev` — modo desenvolvimento  
-- `npm run build` — build de produção (TypeScript + Vite)  
-- `npm run preview` — prévia do build  
-- `npm run lint` — ESLint  
-- `npm run test` — Vitest  
-- `npm run test:watch` — Vitest em modo watch  
+# Scripts disponíveis
 
-## Estrutura do projeto
+npm run dev  
+Executa o projeto em modo desenvolvimento.
 
-```text
+npm run build  
+Build de produção utilizando **TypeScript + Vite**.
+
+npm run preview  
+Executa uma prévia do build gerado.
+
+npm run lint  
+Executa o ESLint.
+
+npm run test  
+Executa os testes com **Vitest**.
+
+npm run test:watch  
+Executa os testes em modo watch.
+
+---
+
+# Estrutura do projeto
+
 api-ecommerce-frontend/
-├─ public/                # Arquivos públicos
-├─ src/
-│  ├─ assets/             # Assets estáticos (imagens, ícones, etc.)
-│  ├─ components/         # Componentes reutilizáveis (Header, Toast, etc.)
-│  ├─ contexts/           # Contextos globais (ToastContext)
-│  ├─ hooks/              # Hooks customizados (useToast)
-│  ├─ pages/              # Páginas/rotas (Produtos, Detalhe, Carrinho, Checkout)
-│  ├─ services/           # Integração HTTP com a API (request centralizado)
-│  ├─ styles/             # Estilos globais e base visual
-│  ├─ test/               # Configuração e setup de testes
-│  ├─ types/              # Tipagens e contratos do backend
-│  ├─ utils/              # Funções utilitárias (ex.: userMessage)
-│  ├─ App.tsx             # Componente raiz da aplicação
-│  ├─ main.tsx            # Bootstrap do React
-│  ├─ index.css           # Estilos globais
-│  └─ vite-env.d.ts       # Tipagens do Vite
-├─ .gitignore
-├─ eslint.config.js
-├─ index.html
-├─ package.json
-├─ package-lock.json
-├─ README.md
-├─ tsconfig.json
-├─ tsconfig.app.json
-├─ tsconfig.node.json
-└─ vite.config.ts
-```
-## Integração com backend
 
-As requisições HTTP são centralizadas em:
+public/ → arquivos públicos  
 
-- `src/services/api.ts`
+src/
 
-### Comportamentos implementados
+assets/ → imagens e assets estáticos  
 
-- Tratamento de erros padronizado via `ApiError` (`status`, `message` e `errors?`)  
-- Respostas `204 No Content` retornam `undefined`  
-- Parse seguro do body de erro, quando existir  
+components/ → componentes reutilizáveis
 
-## UX e feedback
+- Header
+- Toast
+- ProtectedRoute
+- PublicOnlyRoute
 
-O projeto utiliza **toast global** para mensagens de sucesso e erro, evitando o uso de `alert()`:
+contexts/ → contextos globais
 
-- **Sucesso**: ações concluídas com êxito (ex.: item adicionado ao carrinho, pedido finalizado)  
-- **Erro**: falhas de rede ou API com mensagens humanizadas (ex.: backend offline)  
+- AuthContext
+- ToastContext
 
-## Testes
+hooks/ → hooks customizados
 
-Testes implementados com **Vitest**:
+- useToast
 
-- `src/utils/userMessage.test.ts` — valida conversão de erros técnicos em mensagens humanas  
-- `src/services/api.test.ts` — valida o comportamento da função `request` (sucesso, `204` e erros)  
+pages/ → páginas da aplicação
 
-Rodar os testes:
+- ProdutosPage
+- ProdutoDetalhePage
+- CarrinhoPage
+- CheckoutPage
+- LoginPage
+- RegisterPage
+- MeusPedidosPage
 
-```bash
+services/ → integração com API
+
+- api.ts
+- authService.ts
+- carrinhoService.ts
+- pedidoService.ts
+
+styles/ → estilos globais  
+
+types/ → tipagens do backend  
+
+utils/ → utilitários
+
+- userMessage.ts
+
+App.tsx → componente raiz  
+main.tsx → bootstrap da aplicação  
+
+---
+
+# Autenticação
+
+O front-end utiliza **JWT** para autenticação.
+
+Fluxo de autenticação:
+
+1. Usuário se registra
+2. Usuário faz login
+3. O backend retorna um **token JWT**
+4. O token é armazenado no **localStorage**
+5. O token é enviado automaticamente no header das requisições
+
+Exemplo de header:
+
+Authorization: Bearer <token>
+
+Rotas protegidas utilizam o componente:
+
+ProtectedRoute
+
+Rotas públicas utilizam:
+
+PublicOnlyRoute
+
+---
+
+# Integração com backend
+
+Todas as requisições HTTP são centralizadas em:
+
+src/services/api.ts
+
+Funcionalidades implementadas:
+
+- tratamento padronizado de erros via `ApiError`
+- suporte a respostas `204 No Content`
+- parse seguro de mensagens retornadas pela API
+- mensagens amigáveis quando o backend está offline
+
+---
+
+# UX e feedback
+
+O projeto utiliza **toast global** para feedback visual.
+
+Tipos de toast utilizados:
+
+success → ação concluída com sucesso  
+error → erro de API ou rede  
+info → mensagens informativas  
+
+Isso evita o uso de `alert()` e melhora a experiência do usuário.
+
+---
+
+# Testes
+
+Testes implementados com **Vitest**.
+
+Arquivos principais:
+
+src/utils/userMessage.test.ts  
+Valida conversão de erros técnicos em mensagens humanas.
+
+src/services/api.test.ts  
+Valida comportamento da função `request`.
+
+Executar testes:
+
 npm run test
-```
-## Notas
 
-- O `BASE_URL` do backend está configurado para `http://localhost:8080` em `src/services/api.ts`.
-- Para produção, recomenda-se mover essa URL para variável de ambiente, por exemplo:
+---
 
-```env
+# Configuração da API
+
+A URL do backend está configurada em:
+
+src/services/api.ts
+
+Valor padrão:
+
+http://localhost:8080
+
+Para ambientes de produção recomenda-se usar variável de ambiente:
+
 VITE_API_URL=http://localhost:8080
-```
+
+E acessar via:
+
+import.meta.env.VITE_API_URL
+
+---
+
+# Fluxo do sistema
+
+O fluxo completo da aplicação funciona da seguinte forma:
+
+Cadastro  
+↓  
+Login  
+↓  
+Listagem de produtos  
+↓  
+Carrinho  
+↓  
+Checkout  
+↓  
+Criação de pedido  
+↓  
+Histórico de pedidos
+
+---
+
+# Observações
+
+Este projeto faz parte de um **sistema full stack de e-commerce**, composto por:
+
+Backend → Spring Boot + JWT + Flyway + JPA  
+Frontend → React + TypeScript + Vite
+
+O objetivo do projeto é demonstrar a implementação de um fluxo completo de e-commerce com autenticação e integração entre front-end e back-end.
